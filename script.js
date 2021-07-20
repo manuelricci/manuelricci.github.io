@@ -7,14 +7,8 @@ form.addEventListener("submit", (event) => {
   const input = document.querySelector(".js-todo-input");
   const text = input.value.trim();
   if (text !== "") {
-    const todo = {
-      text: text,
-      checked: false,
-      id: Date.now(),
-    };
-    todoItems.push(todo);
+    addTodo(text);
     input.value = "";
-    renderTodo(todo);
   }
 });
 
@@ -29,7 +23,18 @@ list.addEventListener("click", (event) => {
   }
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const ref = localStorage.getItem("todoItems");
+  if (ref) {
+    todoItems = JSON.parse(ref);
+    todoItems.forEach((todo) => {
+      renderTodo(todo);
+    });
+  }
+});
+
 function renderTodo(todo) {
+  localStorage.setItem("todoItems", JSON.stringify(todoItems));
   const list = document.querySelector(".js-todo-list");
   const item = document.querySelector(`[data-key='${todo.id}']`);
 
@@ -74,5 +79,15 @@ function deleteTodo(key) {
     ...todoItems[index],
   };
   todoItems = todoItems.filter((item) => item.id !== Number(key));
+  renderTodo(todo);
+}
+
+function addTodo(text) {
+  const todo = {
+    text: text,
+    checked: false,
+    id: Date.now(),
+  };
+  todoItems.push(todo);
   renderTodo(todo);
 }
