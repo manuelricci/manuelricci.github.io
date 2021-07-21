@@ -1,6 +1,7 @@
 let todoItems = [];
 const form = document.querySelector(".js-form");
 const list = document.querySelector(".js-todo-list");
+const darkModeButton = document.querySelector(".dark-mode-trigger");
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -25,13 +26,41 @@ list.addEventListener("click", (event) => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const ref = localStorage.getItem("todoItems");
+  const isSetDarkMode = localStorage.getItem("darkMode");
   if (ref) {
     todoItems = JSON.parse(ref);
     todoItems.forEach((todo) => {
       renderTodo(todo);
     });
   }
+
+  if (isSetDarkMode === "1") {
+    document.body.classList.add("dark");
+    swapColorTheme(true);
+  }
 });
+
+darkModeButton.addEventListener("click", () => {
+  swapColorTheme();
+});
+
+function swapColorTheme(keep) {
+  if (document.body.classList.contains("dark") && !keep) {
+    localStorage.setItem("darkMode", "0");
+    document.body.classList.remove("dark");
+    darkModeButton.innerText = "🌛";
+    document.documentElement.style.setProperty("--background-color", "#f2f2f2");
+    document.documentElement.style.setProperty("--text-color", "#333333");
+    document.documentElement.style.setProperty("--title-color", "#2196f3");
+  } else {
+    localStorage.setItem("darkMode", "1");
+    document.body.classList.add("dark");
+    darkModeButton.innerText = "🌞";
+    document.documentElement.style.setProperty("--background-color", "#333333");
+    document.documentElement.style.setProperty("--text-color", "#f2f2f2");
+    document.documentElement.style.setProperty("--title-color", "#90caf9");
+  }
+}
 
 function renderTodo(todo) {
   localStorage.setItem("todoItems", JSON.stringify(todoItems));
